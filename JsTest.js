@@ -277,7 +277,11 @@ window.onload = function()
             enemy.draw();
         }
 
-        if (player.hp <= 0) running = false;
+        if (player.hp <= 0)
+        {
+            running = false;
+            alert(`Game over\nscore: ${player.score}`)
+        }
 
         player.move();
         player.draw();
