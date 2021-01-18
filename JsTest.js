@@ -281,6 +281,7 @@ window.onload = function()
         {
             running = false;
             alert(`Game over\nscore: ${player.score}`)
+            clearInterval(t);
         }
 
         player.move();
