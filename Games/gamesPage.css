@@ -1,0 +1,35 @@
+#Screen
+{
+    position: relative;
+    width: 800;
+    height: 400;
+    background-image: url("gamesPageData/Background.png");
+    visibility: visible;
+}
+.backButton
+{
+    position: absolute;
+    background-image:url("gamesPageData/BackButton.png");
+    width: 100px;
+    height: 30px;
+}
+.gamePanel
+{
+    position: absolute;
+    top: 100px;
+    left: 0px;
+    width: 100px;
+    height: 130px;
+}
+.playButton
+{
+    position: absolute;
+    background-image: url("gamesPageData/PlayButton.png");
+    width: 100px;
+    height: 30px;
+}
+.icon
+{
+    position: absolute;
+    top: 30px;
+}
