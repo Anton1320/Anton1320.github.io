@@ -268,7 +268,7 @@ window.onload = function()
                 hpText.text = player.hp;
                 hpText.draw();
             }
-            if (enemy.colision(bullet))
+            else if (enemy.colision(bullet))
             {
                 enemy.delete();
                 enemys.splice(enemys.indexOf(enemy), 1);
@@ -277,7 +277,7 @@ window.onload = function()
                 scoreText.text = player.score;
                 scoreText.draw()
             }
-            if (enemy.liveTime <= 0)
+            else if (enemy.liveTime <= 0)
             {
                 enemy.delete();
                 enemys.splice(enemys.indexOf(enemy), 1);
