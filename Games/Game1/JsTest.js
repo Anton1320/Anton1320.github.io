@@ -119,10 +119,10 @@ class Player extends Movable
 
     shoot(bullet)
     {
-        bullet.pos.x = player.pos.x;
-        bullet.pos.y = player.pos.y;
-        bullet.startPos.x = player.pos.x;
-        bullet.startPos.y = player.pos.y;
+        bullet.pos.x = this.pos.x;
+        bullet.pos.y = this.pos.y;
+        bullet.startPos.x = this.pos.x;
+        bullet.startPos.y = this.pos.y;
         bullet.moveArray = this.direction;
     }
 }
@@ -154,6 +154,11 @@ var bullet = new Bullet([-20, -20]);
 var scoreText = new textObject([5, 5], '0', 'scoreText');
 
 var hpText = new textObject([770, 5], '10', 'hpText')
+
+function reloadGame()
+{
+    location.href = '';
+}
 
 function spawnEnemy()
 {
@@ -287,5 +292,5 @@ window.onload = function()
         player.draw();
         bullet.move();
         bullet.draw();
-    }, 0)
+    }, 0);
 };
