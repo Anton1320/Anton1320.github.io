@@ -240,7 +240,7 @@ window.onload = function()
     {
         if (!running)
         {
-            alert(`Game over\nScore:${player.score}`);
+            //alert(`Game over\nScore:${player.score}`);
             clearInterval(t);
         }
         for (let health of healths)
