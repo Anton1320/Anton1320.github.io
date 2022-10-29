@@ -49,12 +49,15 @@ var Body = /** @class */ (function (_super) {
         _this.radius = 1;
         _this.color = "white";
         _this.mass = mass;
-        _this.radius = mass;
+        _this.radius = mass / 4;
         _this.color = color;
         return _this;
     }
     Body.prototype.draw = function () {
         drawCircle(this.pos.x, this.pos.y, this.radius, this.color);
+    };
+    Body.prototype.colide = function (r) {
+        return len(sub(this.pos, r.pos)) <= this.radius + r.radius;
     };
     return Body;
 }(GameObject));
@@ -87,14 +90,52 @@ var planets = [
     new Body(canvas.width * 2 / 3, canvas.height / 3, 100, "red"),
     new Body(canvas.width / 3, canvas.height * 2 / 3, 100, "red")
 ];
-var asteroid = new Asteroid(new Body(0, 0, 10, "green"));
+var asteroid = new Asteroid(new Body(0, 0, 30, "green"));
 asteroid.speed = { x: 1, y: 0 };
+var asteroidIsSet = false;
+var asteroidIsFired = false;
+function reset() {
+    asteroidIsSet = false;
+    asteroidIsFired = false;
+}
+document.addEventListener("mousemove", mousemoveHandler, false);
+document.addEventListener("mousedown", mousedownHandler, false);
+document.addEventListener("mouseup", mouseupHandler, false);
+function mousemoveHandler(e) {
+    var mousePos = { x: e.offsetX, y: e.offsetY };
+    if (!asteroidIsFired) {
+        if (!asteroidIsSet) {
+            asteroid.body.pos = mousePos;
+        }
+        else {
+            asteroid.speed = mul(sub(asteroid.body.pos, mousePos), 0.05);
+        }
+    }
+}
+function mousedownHandler(e) {
+    if (e.button == 0 && !asteroidIsFired) {
+        asteroidIsSet = true;
+    }
+    if (e.button == 2) {
+        reset();
+    }
+}
+function mouseupHandler(e) {
+    if (e.button == 0 && !asteroidIsFired) {
+        asteroidIsSet = false;
+        asteroidIsFired = true;
+    }
+}
 setInterval(function () {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    asteroid.move(planets);
+    if (asteroidIsFired)
+        asteroid.move(planets);
     for (var _i = 0, planets_2 = planets; _i < planets_2.length; _i++) {
         var planet = planets_2[_i];
         planet.draw();
+        if (planet.colide(asteroid.body)) {
+            reset();
+        }
     }
     asteroid.body.draw();
 }, 10);
