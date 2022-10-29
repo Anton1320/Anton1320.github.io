@@ -1,0 +1,9 @@
+{
+    "compilerOptions": {
+        "noImplicitAny": true,
+        "sourceMap": true,      
+    },
+    "files": [
+        "game.ts",
+    ],
+  }
