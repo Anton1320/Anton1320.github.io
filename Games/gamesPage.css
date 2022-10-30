@@ -21,6 +21,14 @@
     width: 100px;
     height: 130px;
 }
+.gamePanel2
+{
+    position: absolute;
+    top: 100px;
+    left: 110px;
+    width: 100px;
+    height: 130px;
+}
 .playButton
 {
     position: absolute;
