@@ -182,12 +182,13 @@ function mouseupHandler(e) {
     if (e.button == 0 && !asteroidIsFired) {
         asteroidIsSet = false;
         asteroidIsFired = true;
+        frameCounter = 0;
     }
 }
 reset();
 setInterval(function () {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    if (frameCounter > 1000)
+    if (frameCounter > 1000 && asteroidIsFired)
         reset();
     if (asteroid.body.pos.x > 3 * canvas.width || asteroid.body.pos.x < -3 * canvas.width)
         reset();
