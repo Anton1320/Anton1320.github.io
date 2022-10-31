@@ -183,8 +183,10 @@ document.addEventListener("mousedown", mousedownHandler, false);
 document.addEventListener("mouseup", mouseupHandler, false);
 document.addEventListener("keydown", keydownHandler, false);
 var globalMousePos = {x: 0, y: 0};
+
+var speedVector = {x: 0, y: 0}
+
 function mousemoveHandler(e: MouseEvent) {
-    
     globalMousePos = {x: e.screenX, y: e.screenY};
     var mousePos = {x: e.screenX-canvas.offsetLeft, y: e.screenX-canvas.offsetTop};
     if (!asteroidIsFired) {
@@ -194,7 +196,9 @@ function mousemoveHandler(e: MouseEvent) {
             globalAsteroidSetPos = globalMousePos;
         }
         else {
-            asteroid.speed = mul(sub(globalAsteroidSetPos, globalMousePos), 0.05);
+            speedVector = mul(sub(globalAsteroidSetPos, globalMousePos), 0.05)
+            speedVector = div(speedVector, len(speedVector)/Math.min(len(speedVector), maxStartSpeed));
+            asteroid.speed = speedVector
         }
     }
 }
@@ -263,7 +267,8 @@ setInterval(() => {
         }
     }
     if (asteroidIsSet) {
-        drawLine(asteroid.body.pos, sum(asteroid.body.pos, sub(globalAsteroidSetPos, globalMousePos)), "green");
+        
+        drawLine(asteroid.body.pos, sum(asteroid.body.pos, mul(speedVector, 20)), "green");
     }
     frameCounter++;
     if (attemtCounter - attemptatstart > 1) {
