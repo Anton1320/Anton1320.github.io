@@ -131,6 +131,8 @@ asteroid.speed = {x: 1, y: 0};
 var asteroidIsSet = false;
 var globalAsteroidSetPos = {x: 0, y: 0};
 
+let maxStartSpeed = 10;
+
 var asteroidIsFired = false;
 
 var frameCounter = 0;
@@ -224,7 +226,7 @@ function keydownHandler(e: KeyboardEvent) {
 nextLevel();
 setInterval(() => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    if (frameCounter > 1000 && asteroidIsFired) reset();
+    if (frameCounter > 1500 && asteroidIsFired) reset();
     if (asteroid.body.pos.x >3*canvas.width || asteroid.body.pos.x < -3*canvas.width) reset();
     if (asteroid.body.pos.y >3*canvas.height || asteroid.body.pos.y < -3*canvas.height) reset();
     if (asteroidIsFired) asteroid.move(planets);
