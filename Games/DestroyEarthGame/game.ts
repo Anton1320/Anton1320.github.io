@@ -131,7 +131,7 @@ asteroid.speed = {x: 1, y: 0};
 var asteroidIsSet = false;
 var globalAsteroidSetPos = {x: 0, y: 0};
 
-let maxStartSpeed = 10;
+let maxStartSpeed = 4;
 
 var asteroidIsFired = false;
 
