@@ -215,7 +215,7 @@ function keydownHandler(e) {
 nextLevel();
 setInterval(function () {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    if (frameCounter > 1000 && asteroidIsFired)
+    if (frameCounter > 1500 && asteroidIsFired)
         reset();
     if (asteroid.body.pos.x > 3 * canvas.width || asteroid.body.pos.x < -3 * canvas.width)
         reset();
