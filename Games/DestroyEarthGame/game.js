@@ -66,7 +66,7 @@ var Circle = /** @class */ (function (_super) {
         return _this;
     }
     Circle.prototype.draw = function () {
-        drawCircle((this.pos.x - drawOrigin.x) * drawScale, (this.pos.y - drawOrigin.y) * drawScale, this.radius * drawScale, this.color);
+        drawCircle(this.pos.x, this.pos.y, this.radius, this.color);
     };
     return Circle;
 }(GameObject));
@@ -106,13 +106,15 @@ var Asteroid = /** @class */ (function () {
 }());
 function drawCircle(x, y, r, fillStyle) {
     ctx.beginPath();
-    ctx.arc(x, y, r, 0, Math.PI * 2, false);
+    ctx.arc((x - drawOrigin.x) * drawScale, (y - drawOrigin.y) * drawScale, r * drawScale, 0, Math.PI * 2, false);
     ctx.fillStyle = fillStyle;
     ctx.fill();
     ctx.closePath();
 }
 function drawLine(start, end, color) {
     ctx.beginPath();
+    start = mul(sub(start, drawOrigin), drawScale);
+    end = mul(sub(end, drawOrigin), drawScale);
     ctx.moveTo(start.x, start.y);
     ctx.lineTo(end.x, end.y);
     ctx.stroke();
