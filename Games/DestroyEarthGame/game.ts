@@ -57,7 +57,7 @@ class Circle extends GameObject {
         this.color = color
     }
     draw() {
-        drawCircle((this.pos.x-drawOrigin.x)*drawScale, (this.pos.y-drawOrigin.y)*drawScale, this.radius*drawScale, this.color);
+        drawCircle(this.pos.x, this.pos.y, this.radius, this.color);
     }
 }
 
@@ -96,7 +96,7 @@ class Asteroid {
 
 function drawCircle(x: number, y: number, r: number, fillStyle: typeof ctx.fillStyle) {
     ctx.beginPath();
-    ctx.arc(x, y, r, 0, Math.PI * 2, false);
+    ctx.arc((x-drawOrigin.x)*drawScale, (y-drawOrigin.y)*drawScale, r*drawScale, 0, Math.PI * 2, false);
     ctx.fillStyle = fillStyle;
     ctx.fill();
     ctx.closePath();
@@ -104,6 +104,8 @@ function drawCircle(x: number, y: number, r: number, fillStyle: typeof ctx.fillS
 
 function drawLine(start: vector, end: vector, color: typeof ctx.fillStyle) {
     ctx.beginPath();
+    start = mul(sub(start, drawOrigin), drawScale);
+    end = mul(sub(end, drawOrigin), drawScale);
     ctx.moveTo(start.x, start.y);
     ctx.lineTo(end.x, end.y);
     ctx.stroke(); 
