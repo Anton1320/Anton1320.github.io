@@ -74,7 +74,7 @@ var Body = /** @class */ (function (_super) {
     __extends(Body, _super);
     function Body(x, y, mass, color, isTarget) {
         if (isTarget === void 0) { isTarget = false; }
-        var _this = _super.call(this, x, y, mass / 4, color) || this;
+        var _this = _super.call(this, x, y, Math.sqrt(mass) * 3, color) || this;
         _this.mass = 1;
         _this.isTarget = false;
         _this.mass = mass;
@@ -120,30 +120,32 @@ function drawLine(start, end, color) {
     ctx.fill();
     ctx.closePath();
 }
+function randomFillStyle() {
+    var r = rnd(0, 256);
+    var g = rnd(0, 256);
+    var b = rnd(0, 256);
+    return "rgb(" + r.toString() + "," + g.toString() + "," + b.toString() + ")";
+}
 var planets = [
     new Body(canvas.width * 2 / 3, canvas.height / 3, 100, "red"),
     new Body(canvas.width / 3, canvas.height * 2 / 3, 100, "red")
 ];
-var asteroid = new Asteroid(new Body(0, 0, 30, "green"));
+var asteroid = new Asteroid(new Body(0, 0, 15, "green"));
 asteroid.speed = { x: 1, y: 0 };
 var asteroidIsSet = false;
 var globalAsteroidSetPos = { x: 0, y: 0 };
 var asteroidIsFired = false;
 var frameCounter = 0;
 var pathPoints = [];
+var pathPointsColor = randomFillStyle();
 var scoreText = document.getElementById("score");
 var score = 0;
 var attemtCounter = -1;
-function reset() {
-    attemtCounter++;
-    scoreText.textContent = score.toString() + " / " + attemtCounter.toString();
-    asteroidIsSet = false;
-    asteroidIsFired = false;
-    frameCounter = 0;
-    drawOrigin = { x: 0, y: 0 };
-    drawScale = 1;
-    pathPoints = [];
-    asteroid.body.pos = { x: -asteroid.body.radius, y: -asteroid.body.radius };
+var attemptatstart = -1;
+function nextLevel() {
+    reset();
+    deletePathPoints();
+    attemptatstart = attemtCounter;
     var planetsNum = rnd(3, 6);
     planets = [];
     for (var i = 0; i < planetsNum; ++i) {
@@ -152,9 +154,24 @@ function reset() {
     }
     planets.push(new Body(rnd(canvas.width / 8, canvas.width * 7 / 8), rnd(canvas.height / 8, canvas.height / 8), rnd(50, 200), "blue", true));
 }
+function deletePathPoints() {
+    pathPoints = [];
+}
+function reset() {
+    attemtCounter++;
+    scoreText.textContent = score.toString() + " / " + attemtCounter.toString();
+    asteroidIsSet = false;
+    asteroidIsFired = false;
+    frameCounter = 0;
+    drawOrigin = { x: 0, y: 0 };
+    drawScale = 0.99;
+    pathPointsColor = randomFillStyle();
+    asteroid.body.pos = { x: -asteroid.body.radius, y: -asteroid.body.radius };
+}
 document.addEventListener("mousemove", mousemoveHandler, false);
 document.addEventListener("mousedown", mousedownHandler, false);
 document.addEventListener("mouseup", mouseupHandler, false);
+document.addEventListener("keydown", keydownHandler, false);
 var globalMousePos = { x: 0, y: 0 };
 function mousemoveHandler(e) {
     globalMousePos = { x: e.screenX, y: e.screenY };
@@ -174,9 +191,6 @@ function mousedownHandler(e) {
     if (e.button == 0 && !asteroidIsFired) {
         asteroidIsSet = true;
     }
-    if (e.button == 2) {
-        reset();
-    }
 }
 function mouseupHandler(e) {
     if (e.button == 0 && !asteroidIsFired) {
@@ -185,7 +199,18 @@ function mouseupHandler(e) {
         frameCounter = 0;
     }
 }
-reset();
+function keydownHandler(e) {
+    if (e.key == "l") {
+        nextLevel();
+    }
+    if (e.key == "r") {
+        reset();
+    }
+    if (e.key == "d") {
+        deletePathPoints();
+    }
+}
+nextLevel();
 setInterval(function () {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     if (frameCounter > 1000 && asteroidIsFired)
@@ -203,38 +228,44 @@ setInterval(function () {
             if (planet.isTarget) {
                 score++;
                 scoreText.textContent = score.toString();
+                nextLevel();
             }
-            reset();
+            else
+                reset();
         }
     }
     for (var _a = 0, pathPoints_1 = pathPoints; _a < pathPoints_1.length; _a++) {
         var point = pathPoints_1[_a];
         point.draw();
     }
-    drawScale = 1;
+    drawScale = 0.99;
     drawOrigin = { x: 0, y: 0 };
     if (asteroidIsFired) {
         if (asteroid.body.pos.x > canvas.width)
-            drawScale = Math.min(canvas.width / asteroid.body.pos.x, drawScale);
+            drawScale = Math.min(canvas.width / asteroid.body.pos.x, drawScale) * 0.99;
         if (asteroid.body.pos.y > canvas.height)
-            drawScale = Math.min(drawScale, canvas.height / asteroid.body.pos.y, drawScale);
+            drawScale = Math.min(drawScale, canvas.height / asteroid.body.pos.y, drawScale) * 0.99;
         if (asteroid.body.pos.x < 0)
-            drawScale = Math.min(canvas.width / (canvas.width - asteroid.body.pos.x), drawScale);
+            drawScale = Math.min(canvas.width / (canvas.width - asteroid.body.pos.x), drawScale) * 0.99;
         if (asteroid.body.pos.y < 0) {
-            drawScale = Math.min(canvas.height / (canvas.height - asteroid.body.pos.y), drawScale);
+            drawScale = Math.min(canvas.height / (canvas.height - asteroid.body.pos.y), drawScale) * 0.99;
         }
-        if (asteroid.body.pos.x < 0)
-            drawOrigin.x = asteroid.body.pos.x;
-        if (asteroid.body.pos.y < 0)
-            drawOrigin.y = asteroid.body.pos.y;
+        if (asteroid.body.pos.x - 2 * asteroid.body.radius < 0)
+            drawOrigin.x = asteroid.body.pos.x - 2 * asteroid.body.radius;
+        if (asteroid.body.pos.y - 2 * asteroid.body.radius < 0)
+            drawOrigin.y = asteroid.body.pos.y - 2 * asteroid.body.radius;
         if (frameCounter % 7 == 0) {
-            pathPoints.push(new Circle(asteroid.body.pos.x, asteroid.body.pos.y, 2, "black"));
+            pathPoints.push(new Circle(asteroid.body.pos.x, asteroid.body.pos.y, 2, pathPointsColor));
         }
     }
     if (asteroidIsSet) {
         drawLine(asteroid.body.pos, sum(asteroid.body.pos, sub(globalAsteroidSetPos, globalMousePos)), "green");
     }
     frameCounter++;
+    if (attemtCounter - attemptatstart > 1) {
+        attemtCounter--;
+        nextLevel();
+    }
     asteroid.body.draw();
 }, 10);
 //# sourceMappingURL=game.js.map
