@@ -31,7 +31,6 @@ class textObject extends gameObject
         ctx.fillStyle = this.color;
         ctx.fill();
         ctx.fillText(this.text, this.pos.x, this.pos.y);
-        
         ctx.closePath();
     }
 }
