@@ -1,5 +1,6 @@
 const screenSize = {x:800, y:600};
-var sc = document.getElementsByClassName('screen')[0];
+var sc = document.getElementById("myCanvas");
+var ctx = sc.getContext("2d");
 function randomInteger(min, max)
 {
     let rand = min + Math.random() * (max + 1 - min);
@@ -8,43 +9,38 @@ function randomInteger(min, max)
 
 class gameObject
 {
-    constructor(pos, className)
+    constructor(pos, color, className)
     {
         this.pos = {x:pos[0], y:pos[1]};
-        let node = document.createElement('div');
-        this.Object = node;
-        node.className = className;
-        sc.appendChild(node);
-    }
-
-    draw()
-    {
-        this.Object.style.left = this.pos.x;
-        this.Object.style.top = this.pos.y;
-    }
+        this.className = className;
+        this.color = color;
+    }    
 }
 
 class textObject extends gameObject
 {
-    constructor(pos, text, className)
+    constructor(pos, text, color, className)
     {
-        super(pos, className);
+        super(pos, color, className);
         this.text = text;
-        this.Object.innerHTML = this.text;
-        this.Object.style.left = this.pos.x;
-        this.Object.style.top = this.pos.y;
     }
     draw()
     {
-        this.Object.innerHTML = this.text;
+        ctx.beginPath();
+        ctx.font = '15px arial';
+        ctx.fillStyle = this.color;
+        ctx.fill();
+        ctx.fillText(this.text, this.pos.x, this.pos.y);
+        
+        ctx.closePath();
     }
 }
 
 class Item extends gameObject
 {
-    constructor(pos, size, className)
+    constructor(pos, size, color, className)
     {
-        super(pos, className);
+        super(pos, color, className);
         this.size = {x:size[0], y:size[1]};
     }
 
@@ -56,14 +52,22 @@ class Item extends gameObject
         return false;
     }
 
-    delete() { sc.removeChild(this.Object); }
+    draw()
+    {
+        ctx.beginPath();
+        ctx.rect(this.pos.x, this.pos.y, this.size.x, this.size.y)
+        ctx.fillStyle = this.color;
+        ctx.fill();
+        ctx.closePath();
+    }
+//there was delete fn
 }
 
 class Health extends Item
 {
     constructor(pos)
     {
-        super(pos, [20, 20], 'health');
+        super(pos, [20, 20], "orange", 'health');
     }
 
     move()
@@ -75,9 +79,9 @@ class Health extends Item
 
 class Movable extends Item
 {
-    constructor(pos, size, speed, className)
+    constructor(pos, size, speed, color, className)
     {
-        super(pos, size, className);
+        super(pos, size, color, className);
         this.speed = speed;
         this.moveArray = {Up:false, Down:false, Left:false, Right:false};
     }
@@ -95,7 +99,7 @@ class Bullet extends Movable
 {
     constructor(pos)
     {
-        super(pos, [20, 20], 4, 'bullet');
+        super(pos, [20, 20], 4, "black", 'bullet');
         this.startPos = {x:pos[0], y:pos[1]};
     }
 
@@ -111,7 +115,7 @@ class Player extends Movable
 {
     constructor(pos)
     {
-        super(pos, [20, 20], 2, 'player');
+        super(pos, [20, 20], 2, "green", 'player');
         this.direction = {Up:false, Down:false, Left:false, Right:false};
         this.hp = 10;
         this.score = 0;
@@ -131,7 +135,7 @@ class Enemy extends Movable
 {
     constructor(pos)
     {
-        super(pos, [20, 20], 1, 'enemy');
+        super(pos, [20, 20], 1, "blue", 'enemy');
         this.liveTime = 10000;
     }
 
@@ -151,9 +155,9 @@ for (let i = 0; i < 10; ++i) healths.push(new Health([200, 200]))
 
 var bullet = new Bullet([-20, -20]);
 
-var scoreText = new textObject([5, 5], '0', 'scoreText');
+var scoreText = new textObject([5, 15], '0', "black", 'scoreText');
 
-var hpText = new textObject([770, 5], '10', 'hpText')
+var hpText = new textObject([770, 15], '10', "red", 'hpText')
 
 function reloadGame()
 {
@@ -207,7 +211,7 @@ document.onkeydown = function(event)
         player.moveArray.Right = true;
         player.direction = {Up:false, Down:false, Left:false, Right:true};
     }
-    if (event.code == 'ControlLeft') player.shoot(bullet);
+    if (event.code == 'ControlLeft' || event.code == 'KeyX') player.shoot(bullet);
 }
 
 document.onkeyup = function(event)
@@ -238,6 +242,7 @@ window.onload = function()
 
     var t = setInterval(function()
     {
+        ctx.clearRect(0, 0, screenSize.x, screenSize.y);
         if (!running)
         {
             //alert(`Game over\nScore:${player.score}`);
@@ -251,9 +256,9 @@ window.onload = function()
                 player.score++;
                 player.hp++;
                 scoreText.text = player.score;
-                scoreText.draw();
+                
                 hpText.text = player.hp;
-                hpText.draw();
+                
                 spawnEnemy();
             }
             health.draw();
@@ -263,23 +268,18 @@ window.onload = function()
             if (enemy.colision(player))
             {
                 player.hp -= 5;
-                enemy.delete();
                 enemys.splice(enemys.indexOf(enemy), 1);
                 hpText.text = player.hp;
-                hpText.draw();
             }
             else if (enemy.colision(bullet))
             {
-                enemy.delete();
                 enemys.splice(enemys.indexOf(enemy), 1);
                 bullet.remove();
                 player.score += 5;
                 scoreText.text = player.score;
-                scoreText.draw()
             }
             else if (enemy.liveTime <= 0)
             {
-                enemy.delete();
                 enemys.splice(enemys.indexOf(enemy), 1);
             }
             enemy.move(player);
@@ -292,5 +292,7 @@ window.onload = function()
         player.draw();
         bullet.move();
         bullet.draw();
+        hpText.draw();
+        scoreText.draw();
     }, 0);
 };
