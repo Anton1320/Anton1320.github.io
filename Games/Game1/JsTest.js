@@ -260,27 +260,36 @@ window.onload = function()
             }
             health.draw();
         }
-        for (let enemy of enemys)
+        for (let i = 0; i < enemys.length; ++i)
         {
-            if (enemy.colision(player))
+            if (enemys[i].colision(player))
             {
                 player.hp -= 5;
-                enemys.splice(enemys.indexOf(enemy), 1);
+                let q = enemys[i];
+                enemys[i] = enemys[enemys.length-1];
+                enemys[enemys.length-1] = q;
+                enemys.pop();
                 hpText.text = player.hp;
             }
-            else if (enemy.colision(bullet))
+            else if (enemys[i].colision(bullet))
             {
-                enemys.splice(enemys.indexOf(enemy), 1);
+                let q = enemys[i];
+                enemys[i] = enemys[enemys.length-1];
+                enemys[enemys.length-1] = q;
+                enemys.pop();
                 bullet.remove();
                 player.score += 5;
                 scoreText.text = player.score;
             }
-            else if (enemy.liveTime <= 0)
+            else if (enemys[i].liveTime <= 0)
             {
-                enemys.splice(enemys.indexOf(enemy), 1);
+                let q = enemys[i];
+                enemys[i] = enemys[enemys.length-1];
+                enemys[enemys.length-1] = q;
+                enemys.pop();
             }
-            enemy.move(player);
-            enemy.draw();
+            enemys[i].move(player);
+            enemys[i].draw();
         }
 
         if (player.hp <= 0) running = false;
