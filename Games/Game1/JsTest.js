@@ -226,7 +226,8 @@ var running = true;
 window.onload = function()
 {
     var timer = 0;
-    var t1 = setInterval(function()
+
+    var t = setInterval(function()
     {
         timer++;
         for (let enemy of enemys)
@@ -238,11 +239,6 @@ window.onload = function()
             spawnEnemy();
             timer = 0;
         }
-        if (!running) clearInterval(t1);
-    }, 1)
-
-    var t = setInterval(function()
-    {
         ctx.clearRect(0, 0, screenSize.x, screenSize.y);
         if (!running)
         {
