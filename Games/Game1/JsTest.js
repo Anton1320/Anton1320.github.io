@@ -238,6 +238,7 @@ window.onload = function()
             spawnEnemy();
             timer = 0;
         }
+        if (!running) clearInterval(t1);
     }, 1)
 
     var t = setInterval(function()
