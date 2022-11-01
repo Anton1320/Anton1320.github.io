@@ -126,7 +126,7 @@ class Player extends Movable
         bullet.pos.y = this.pos.y;
         bullet.startPos.x = this.pos.x;
         bullet.startPos.y = this.pos.y;
-        bullet.moveArray = this.direction;
+        bullet.moveArray = Object.assign(bullet.moveArray, this.moveArray);
     }
 }
 
@@ -150,7 +150,10 @@ var player = new Player([100, 100]);
 var enemys = [new Enemy([800, 600])];
 
 var healths = [new Health([200, 200])];
-for (let i = 0; i < 10; ++i) healths.push(new Health([200, 200]))
+for (let i = 0; i < 10; ++i){
+    healths.push(new Health([200, 200]))
+    healths[i].move();
+}
 
 var bullet = new Bullet([-20, -20]);
 
@@ -233,7 +236,7 @@ window.onload = function()
         {
             enemy.liveTime -= 1;
         }
-        if (timer >= 10000/(player.score+1))
+        if (timer >= Math.max(200-player.score, 60))
         {
             spawnEnemy();
             timer = 0;
@@ -249,7 +252,7 @@ window.onload = function()
             if (health.colision(player))
             {
                 health.move()
-                player.score++;
+                player.score+=5;
                 player.hp++;
                 scoreText.text = player.score;
                 
@@ -279,7 +282,7 @@ window.onload = function()
                 enemys[enemys.length-1] = q;
                 enemys.pop();
                 bullet.remove();
-                player.score += 5;
+                player.score += 1;
                 scoreText.text = player.score;
             }
             else if (enemys[i].liveTime <= 0)
