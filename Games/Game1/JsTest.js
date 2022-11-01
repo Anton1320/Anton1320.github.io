@@ -261,6 +261,8 @@ window.onload = function()
         }
         for (let i = 0; i < enemys.length; ++i)
         {
+            enemys[i].move(player);
+            enemys[i].draw();
             if (enemys[i].colision(player))
             {
                 player.hp -= 5;
@@ -287,8 +289,6 @@ window.onload = function()
                 enemys[enemys.length-1] = q;
                 enemys.pop();
             }
-            enemys[i].move(player);
-            enemys[i].draw();
         }
 
         if (player.hp <= 0) running = false;
