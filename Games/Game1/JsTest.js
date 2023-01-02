@@ -108,22 +108,6 @@ class Explosion extends Item {
     }
 }
 
-class Bullet extends Movable
-{
-    constructor(pos)
-    {
-        super(pos, [20, 20], 4, "black", 'bullet');
-        this.startPos = {x:pos[0], y:pos[1]};
-    }
-
-    remove()
-    {
-        this.pos.x = -this.size.x;
-        this.pos.y = -this.size.y;
-        this.moveArray = {Up:false, Down:false, Left:false, Right:false};
-    }
-}
-
 class Player extends Movable
 {
     constructor(pos)
@@ -132,15 +116,6 @@ class Player extends Movable
         this.direction = {Up:false, Down:false, Left:false, Right:false};
         this.hp = 10;
         this.score = 0;
-    }
-
-    shoot(bullet)
-    {
-        bullet.pos.x = this.pos.x;
-        bullet.pos.y = this.pos.y;
-        bullet.startPos.x = this.pos.x;
-        bullet.startPos.y = this.pos.y;
-        bullet.moveArray = Object.assign(bullet.moveArray, this.moveArray);
     }
 }
 
@@ -171,8 +146,6 @@ for (let i = 0; i < 10; ++i){
 
 var explosions = [];
 var maxExplosionSize = 200;
-
-var bullet = new Bullet([-20, -20]);
 
 var scoreText = new textObject([5, 15], '0', "black", 'scoreText');
 
@@ -230,7 +203,6 @@ document.onkeydown = function(event)
         player.moveArray.Right = true;
         player.direction = {Up:false, Down:false, Left:false, Right:true};
     }
-    if (event.code == 'ControlLeft' || event.code == 'KeyX') player.shoot(bullet);
 }
 
 document.onkeyup = function(event)
@@ -306,7 +278,6 @@ window.onload = function()
                 if (enemys[i].colision(expl)) {
                     enemys[i] = enemys[enemys.length-1];
                     enemys.pop();
-                    bullet.remove();
                     player.score += 1;
                     player.hp += 1;
                     scoreText.text = player.score;
@@ -329,8 +300,6 @@ window.onload = function()
 
         player.move();
         player.draw();
-        bullet.move();
-        bullet.draw();
         hpText.draw();
         scoreText.draw();
     }, 0);
