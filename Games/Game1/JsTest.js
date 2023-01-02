@@ -225,7 +225,7 @@ window.onload = function()
         {
             enemy.liveTime -= 1;
         }
-        if (timer >= Math.max(200-player.score, 20))
+        if (timer >= 2000/(1+0.2*player.score))
         {
             spawnEnemy();
             timer = 0;
