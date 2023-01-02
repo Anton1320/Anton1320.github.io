@@ -94,6 +94,20 @@ class Movable extends Item
     }
 }
 
+class Explosion extends Item {
+    constructor (pos, startSize) {
+        super(pos, startSize, "tomato", "explosion");
+        this.expansionSpeed = 5;
+    }
+
+    expand() {
+        this.size.x += this.expansionSpeed;
+        this.size.y += this.expansionSpeed;
+        this.pos.x -= this.expansionSpeed/2;
+        this.pos.y -= this.expansionSpeed/2;
+    }
+}
+
 class Bullet extends Movable
 {
     constructor(pos)
@@ -154,6 +168,9 @@ for (let i = 0; i < 10; ++i){
     healths.push(new Health([200, 200]))
     healths[i].move();
 }
+
+var explosions = [];
+var maxExplosionSize = 200;
 
 var bullet = new Bullet([-20, -20]);
 
@@ -236,7 +253,7 @@ window.onload = function()
         {
             enemy.liveTime -= 1;
         }
-        if (timer >= Math.max(200-player.score, 60))
+        if (timer >= Math.max(200-player.score, 20))
         {
             spawnEnemy();
             timer = 0;
@@ -251,6 +268,7 @@ window.onload = function()
         {
             if (health.colision(player))
             {
+                explosions.push(new Explosion([health.pos.x, health.pos.y], [health.size.x, health.size.y]))
                 health.move()
                 player.score+=5;
                 player.hp++;
@@ -275,16 +293,6 @@ window.onload = function()
                 enemys.pop();
                 hpText.text = player.hp;
             }
-            else if (enemys[i].colision(bullet))
-            {
-                let q = enemys[i];
-                enemys[i] = enemys[enemys.length-1];
-                enemys[enemys.length-1] = q;
-                enemys.pop();
-                bullet.remove();
-                player.score += 1;
-                scoreText.text = player.score;
-            }
             else if (enemys[i].liveTime <= 0)
             {
                 let q = enemys[i];
@@ -293,8 +301,31 @@ window.onload = function()
                 enemys.pop();
             }
         }
+        for (let expl of explosions) {
+            for (let i = 0; i < enemys.length; ++i) {
+                if (enemys[i].colision(expl)) {
+                    enemys[i] = enemys[enemys.length-1];
+                    enemys.pop();
+                    bullet.remove();
+                    player.score += 1;
+                    player.hp += 1;
+                    scoreText.text = player.score;
+                }
+            }
+            expl.expand();
+        }
 
         if (player.hp <= 0) running = false;
+
+        for (let i = 0; i < explosions.length; ++i) {
+            if (explosions[i].size.x >= maxExplosionSize) {
+                explosions[i] = explosions[explosions.length-1];
+                explosions.pop();
+            }
+            else {
+                explosions[i].draw();
+            }
+        }
 
         player.move();
         player.draw();
